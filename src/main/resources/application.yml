@@ -1,0 +1,7 @@
+micronaut:
+    application:
+        name: etherium
+
+etherium:
+  keyfile: /home/vanderwerf/.etherium/chaindata/keystore/UTC--2018-09-14T04-08-07.495143797Z--b4daa66bde60e21746ccb2c88839b704dcefe8fc
+  password: changeme

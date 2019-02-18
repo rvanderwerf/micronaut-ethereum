@@ -1,0 +1,63 @@
+plugins {
+    id "io.spring.dependency-management" version "1.0.6.RELEASE"
+    id "com.github.johnrengelman.shadow" version "4.0.2"
+    id 'org.web3j' version '4.0.3'
+}
+
+apply plugin:"application"
+apply plugin:"groovy"
+apply plugin:"org.web3j"
+
+version "0.1"
+group "example.micronaut"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://jcenter.bintray.com" }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'io.micronaut:micronaut-bom:1.0.3'
+    }
+}
+ext {
+    web3jVersion = '4.1.1'
+}
+
+
+dependencies {
+    compile "io.micronaut:micronaut-http-client"
+    compile "io.micronaut:micronaut-http-server-netty"
+    compile "io.micronaut:micronaut-runtime-groovy"
+    compile "io.micronaut:micronaut-validation"
+    compileOnly "io.micronaut:micronaut-inject-groovy"
+    compile "org.web3j:core:$web3jVersion"
+    runtime "ch.qos.logback:logback-classic:1.2.3"
+    testCompile "io.micronaut:micronaut-inject-groovy"
+    testCompile("org.spockframework:spock-core") {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
+    testCompile "junit:junit:4.12"
+    testCompile "io.micronaut:micronaut-inject-java"
+    testCompile "org.hamcrest:hamcrest-all:1.3"
+}
+
+shadowJar {
+    mergeServiceFiles()
+}
+
+run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1')
+
+mainClassName = "example.micronaut.Application"
+tasks.withType(GroovyCompile) {
+    groovyOptions.forkOptions.jvmArgs.add('-Dgroovy.parameters=true')
+}
+
+web3j {
+    generatedPackageName = 'org.micronaut.web3j.generated.{0}'
+    generatedFilesBaseDir = "build/resources/web3j/generated"
+    excludedContracts = ['Greeter','Mortal']
+    useNativeJavaTypes = false
+}
